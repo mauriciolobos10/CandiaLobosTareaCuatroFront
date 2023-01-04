@@ -11,11 +11,33 @@ import { LinearProgress } from "@mui/material";
 const Home = () => {
     
     
-    
 
-    // useEffect(() => {
-    //     cargarImagenes();
-    // }, []);
+
+    useEffect(() => {
+        //cargarImagenes();
+
+        axios.get("http://127.0.0.1:8000/api/tinder/verInteresadosRechazados?id=1").then(
+            (response) => {
+                //setAceptados(response.data.perros);
+
+                setCancelados(response.data.perros);
+            },
+            (error) => {
+                console.log(error);
+            }
+        );
+        axios.get("http://127.0.0.1:8000/api/tinder/verInteresadosAceptados?id=1").then(
+            (response) => {
+                //setAceptados(response.data.perros);
+
+                setAceptados(response.data.perros);
+            },
+            (error) => {
+                console.log(error);
+            }
+        );
+
+    }, []);
     
     const [listado, setListado] = useState([]);
     const [finder, setFinder] = useState("");
@@ -30,7 +52,7 @@ const Home = () => {
 
     const { data: objetoPrueba, isLoading: cargandoDos , refetch: recargar, isRefetching: cargando} = useBuscarPerro();
 
-  console.log(objetoPrueba);
+  //console.log(objetoPrueba);
 
     
 
@@ -75,26 +97,162 @@ const Home = () => {
         
     }
     const stackCancelados = (itemExterno) => {
+        axios.post("http://127.0.0.1:8000/api/tinder/postInteraccion", {
+            preferencia: 'R',
+            id_perro_interesado: 1,
+            id_perro_candidato: itemExterno.id  
+            });
         setCancelados((cancelados) => [itemExterno,...cancelados]);
         recargar();
         //cargarImagenes();
         //console.log(itemExterno);
+
+        axios.post("http://127.0.0.1:8000/api/tinder/postInteraccion", {
+            preferencia: 'R',
+            id_perro_interesado: 1,
+            id_perro_candidato: itemExterno.id  
+            });
+            //console.log(itemExterno);
+            
+        var perroRechazado = {
+            url_foto: itemExterno.perroFoto,
+            nombre: itemExterno.perroNombre,
+            descripcion: itemExterno.descripcionPerro,
+            id: itemExterno.id
+        };
+
+        //console.log(perroRechazado);
+        
+        // setAceptados((aceptados) => [ itemExterno, ...aceptados]);
+         axios.get("http://127.0.0.1:8000/api/tinder/verInteresadosRechazados?id=1").then(
+            (response) => {
+                //setAceptados(response.data.perros);
+
+                setCancelados((Cancelados) => [ perroRechazado, ...response.data.perros]);
+            },
+            (error) => {
+                console.log(error);
+            }
+        );
+
+
+
+        //console.log(aceptadosAPI);
+        //setAceptados();
+        recargar();
+        //cargarImagenes();
     }
-    const stackAceptados = (itemExterno) => {
-        setAceptados((aceptados) => [ itemExterno, ...aceptados]);
+    
+    const stackAceptados =  (itemExterno) => {
+        axios.post("http://127.0.0.1:8000/api/tinder/postInteraccion", {
+            preferencia: 'A',
+            id_perro_interesado: 1,
+            id_perro_candidato: itemExterno.id  
+            });
+            //console.log(itemExterno);
+            
+        var perroAceptado = {
+            url_foto: itemExterno.perroFoto,
+            nombre: itemExterno.perroNombre,
+            descripcion: itemExterno.descripcionPerro,
+            id: itemExterno.id
+        };
+
+        //console.log(perroAceptado);
+        
+        // setAceptados((aceptados) => [ itemExterno, ...aceptados]);
+         axios.get("http://127.0.0.1:8000/api/tinder/verInteresadosAceptados?id=1").then(
+            (response) => {
+                //setAceptados(response.data.perros);
+
+                setAceptados((aceptados) => [ perroAceptado, ...response.data.perros]);
+            },
+            (error) => {
+                console.log(error);
+            }
+        );
+
+
+
+        //console.log(aceptadosAPI);
+        //setAceptados();
         recargar();
         //cargarImagenes();
     }
     const stackArrepentidoC = (itemExterno) => {
-        setAceptados((aceptados) => [ itemExterno, ...aceptados]);
-        let result = cancelados.filter((item) => item.perroFoto !== itemExterno.perroFoto);
+        //console.log(itemExterno);
+        axios.post("http://127.0.0.1:8000/api/tinder/cambiarInteraccion", {
+            preferencia: 'A',
+            id_perro_interesado: 1,
+            id_perro_candidato: itemExterno.id  
+            });
+            //console.log(itemExterno);
+            
+        var perroAceptado = {
+            url_foto: itemExterno.perroFoto,
+            nombre: itemExterno.perroNombre,
+            descripcion: itemExterno.descripcionPerro,
+            id: itemExterno.id
+        };
+
+        //console.log(perroAceptado);
+        
+        // setAceptados((aceptados) => [ itemExterno, ...aceptados]);
+         axios.get("http://127.0.0.1:8000/api/tinder/verInteresadosAceptados?id=1").then(
+            (response) => {
+                //setAceptados(response.data.perros);
+
+                setAceptados((aceptados) => [ perroAceptado, ...response.data.perros]);
+            },
+            (error) => {
+                console.log(error);
+            }
+        );
+
+
+        //setAceptados((aceptados) => [ itemExterno, ...aceptados]);
+        let result = cancelados.filter((item) => item.url_foto !== itemExterno.perroFoto);
         setCancelados(result);
         
     }
     const stackArrepentidoA = (itemExterno) => {
-        setCancelados((cancelados) => [ itemExterno,...cancelados]);
-        let result = aceptados.filter((item) => item.perroFoto !== itemExterno.perroFoto);
+        axios.post("http://127.0.0.1:8000/api/tinder/cambiarInteraccion", {
+            preferencia: 'R',
+            id_perro_interesado: 1,
+            id_perro_candidato: itemExterno.id  
+            });
+            
+        var perroRechazado = {
+            url_foto: itemExterno.perroFoto,
+            nombre: itemExterno.perroNombre,
+            descripcion: itemExterno.descripcionPerro,
+            id: itemExterno.id
+        };
+
+        
+        // setAceptados((aceptados) => [ itemExterno, ...aceptados]);
+         axios.get("http://127.0.0.1:8000/api/tinder/verInteresadosRechazados?id=1").then(
+            (response) => {
+                //setAceptados(response.data.perros);
+
+                setCancelados((cancelados) => [ perroRechazado, ...response.data.perros]);
+            },
+            (error) => {
+                console.log(error);
+            }
+        );
+
+
+        //setAceptados((aceptados) => [ itemExterno, ...aceptados]);
+        let result = aceptados.filter((item) => item.url_foto !== itemExterno.perroFoto);
         setAceptados(result);
+
+
+
+
+        // setCancelados((cancelados) => [ itemExterno,...cancelados]);
+        // let result = aceptados.filter((item) => item.perroFoto !== itemExterno.perroFoto);
+        // setAceptados(result);
         
     }
 
@@ -125,7 +283,7 @@ const Home = () => {
                                 <CircularProgress />
                                 
                             ): (objetoPrueba&& <Perro foto= {objetoPrueba.foto} nombre={objetoPrueba.nombre} descripcion={objetoPrueba.descripcion}
-                                funcionCancelados={stackCancelados} funcionAceptados={stackAceptados} estadoBoton={cargando}></Perro>
+                                id= {objetoPrueba.id} funcionCancelados={stackCancelados} funcionAceptados={stackAceptados} estadoBoton={cargando}></Perro>
                         )}
      
                     </Grid>
@@ -136,8 +294,13 @@ const Home = () => {
                         </Typography>
                         <Grid item  sx={{ overflowY: "scroll", maxHeight: "80vh"}}>
                             {aceptados.map((element, index) => (
+                                // <Perro 
+                                //     foto= {element.perroFoto} nombre= {element.perroNombre} descripcion={element.descripcionPerro} cancelado= {"aceptado" } 
+                                //     id= {element.id} funcionArrepentirseA= {stackArrepentidoA}
+                                // ></Perro>
                                 <Perro 
-                                    foto= {element.perroFoto} nombre= {element.perroNombre} descripcion={element.descripcionPerro} cancelado= {"aceptado" } funcionArrepentirseA= {stackArrepentidoA}
+                                    foto= {element.url_foto} nombre= {element.nombre} descripcion={element.descripcion} cancelado= {"aceptado" } 
+                                    id= {element.id} funcionArrepentirseA= {stackArrepentidoA}
                                 ></Perro>
                             ))}
                         </Grid>
@@ -151,8 +314,13 @@ const Home = () => {
                         <Grid item sx={{ overflowY: "scroll", maxHeight: "80vh"}}>
                             {cancelados.map((element, index) => (
                                 <Perro 
-                                foto= {element.perroFoto} nombre= {element.perroNombre} descripcion={element.descripcionPerro} cancelado= {"cancelado"}  funcionArrepentirseC= {stackArrepentidoC}
+                                foto= {element.url_foto} nombre= {element.nombre} descripcion={element.descripcion} cancelado= {"cancelado" } 
+                                id= {element.id} funcionArrepentirseC= {stackArrepentidoC}
                                 ></Perro>
+                                // <Perro 
+                                // foto= {element.perroFoto} nombre= {element.perroNombre} descripcion={element.descripcionPerro} cancelado= {"cancelado"}  
+                                // id= {element.id} funcionArrepentirseC= {stackArrepentidoC}
+                                // ></Perro>
                                 
                             ))}
                         </Grid>

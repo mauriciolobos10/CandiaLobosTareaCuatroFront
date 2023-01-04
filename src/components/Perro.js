@@ -7,10 +7,10 @@ import RedoIcon from '@mui/icons-material/Redo';
 import UndoIcon from '@mui/icons-material/Undo';
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 
-const Perro = ({foto,nombre,descripcion,estilo=null, funcionCancelados = null, funcionAceptados = null,estadoBoton=null, cancelado= null,
+const Perro = ({foto,nombre,descripcion,id, estilo=null, funcionCancelados = null, funcionAceptados = null,estadoBoton=null, cancelado= null,
     funcionArrepentirseC=null, funcionArrepentirseA=null}) => {
     
-    const perroFusion = {perroFoto: foto, perroNombre: nombre, descripcionPerro: descripcion}
+    const perroFusion = {perroFoto: foto, perroNombre: nombre, descripcionPerro: descripcion, id: id}
     //console.log(perroFusion);    
     const [show, setShow] = useState(false);
     return(
@@ -27,7 +27,7 @@ const Perro = ({foto,nombre,descripcion,estilo=null, funcionCancelados = null, f
                 />
                 
             </Card>
-            <Box alignItems="center" display="flex">
+            <Box alignItems="center" display="flex"> 
 
                     <Box>
                         
